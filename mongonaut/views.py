@@ -248,7 +248,7 @@ class DocumentEditFormView(MongonautViewMixin, FormView, MongonautFormViewMixin)
 
         return context
 
-    def get_form(self, Form):
+    def get_form(self, Form=None):
         self.set_mongoadmin()
         context = self.set_permissions_in_context({})
 
@@ -261,6 +261,9 @@ class DocumentEditFormView(MongonautViewMixin, FormView, MongonautFormViewMixin)
             self.document = self.document_type.objects.get(pk=self.ident)
         except self.document_type.DoesNotExist:
             raise Http404
+
+        if Form is None:
+            Form = self.get_form_class()
         self.form = Form()
 
         if self.request.method == 'POST':
@@ -299,9 +302,12 @@ class DocumentAddFormView(MongonautViewMixin, FormView, MongonautFormViewMixin):
 
         return context
 
-    def get_form(self, Form):
+    def get_form(self, Form=None):
         self.set_mongonaut_base()
         self.document_type = getattr(self.models, self.document_name)
+
+        if Form is None:
+            Form = self.get_form_class()
         self.form = Form()
 
         if self.request.method == 'POST':
